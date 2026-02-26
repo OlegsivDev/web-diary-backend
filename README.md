@@ -1,10 +1,10 @@
-# 📓 Diary App — ASP.NET Core 8 Backend
+# 📓 Diary App — ASP.NET Core Backend
 
-REST API для личного дневника с JWT-аутентификацией, Entity Framework Core и SQLite.
+REST API for a personal diary application with JWT authentication, Entity Framework Core, and SQLite.
 
 ---
 
-## Структура проекта
+## Project Structure
 
 ```
 DiaryApp/
@@ -14,15 +14,15 @@ DiaryApp/
 ├── Data/
 │   └── AppDbContext.cs        # EF Core DbContext
 ├── DTOs/
-│   └── Dtos.cs                # Request/Response модели
+│   └── Dtos.cs                # Request/Response models
 ├── Migrations/
-│   └── ...                    # EF Core миграции
+│   └── ...                    # EF Core migrations
 ├── Models/
 │   ├── User.cs
 │   └── Post.cs
 ├── Services/
-│   ├── AuthService.cs         # Регистрация, логин, JWT
-│   └── PostService.cs         # Бизнес-логика постов
+│   ├── AuthService.cs         # Registration, login, JWT token generation
+│   └── PostService.cs         # Post business logic
 ├── appsettings.json
 ├── DiaryApp.csproj
 └── Program.cs
@@ -30,44 +30,46 @@ DiaryApp/
 
 ---
 
-## Быстрый старт
+## Quick Start
 
-### 1. Установка зависимостей
+### 1. Install dependencies
 
 ```bash
 cd DiaryApp
 dotnet restore
 ```
 
-### 2. Запуск
+### 2. Run the application
 
 ```bash
 dotnet run
 ```
 
-База данных `diary.db` (SQLite) создаётся автоматически при первом запуске.
+The `diary.db` SQLite database is created automatically on first launch.
 
 ### 3. Swagger UI
 
-Откройте [http://localhost:5000/swagger](http://localhost:5000/swagger)
+Open [http://localhost:5000/swagger](http://localhost:5000/swagger) to explore and test the API interactively.
 
 ---
 
 ## API Endpoints
 
-### 🔐 Аутентификация
+### 🔐 Authentication
 
-| Метод | URL | Описание |
-|-------|-----|----------|
-| `POST` | `/api/auth/register` | Регистрация |
-| `POST` | `/api/auth/login` | Вход |
+| Method | URL | Description |
+|--------|-----|-------------|
+| `POST` | `/api/auth/register` | Create a new account |
+| `POST` | `/api/auth/login` | Sign in to an existing account |
 
-Оба endpoint'а возвращают JWT-токен. Все последующие запросы требуют заголовок:
+Both endpoints return a JWT token. All subsequent requests must include the following header:
+
 ```
 Authorization: Bearer <token>
 ```
 
-#### Регистрация
+#### Register
+
 ```json
 POST /api/auth/register
 {
@@ -77,7 +79,8 @@ POST /api/auth/register
 }
 ```
 
-#### Логин
+#### Login
+
 ```json
 POST /api/auth/login
 {
@@ -86,7 +89,8 @@ POST /api/auth/login
 }
 ```
 
-**Ответ:**
+**Response:**
+
 ```json
 {
   "token": "eyJhbGci...",
@@ -98,33 +102,35 @@ POST /api/auth/login
 
 ---
 
-### 📝 Посты (требуют авторизации)
+### 📝 Posts (require authentication)
 
-| Метод | URL | Описание |
-|-------|-----|----------|
-| `GET` | `/api/posts?page=1&pageSize=10` | Лента (новые → старые) |
-| `GET` | `/api/posts/{id}` | Получить пост по ID |
-| `POST` | `/api/posts` | Создать пост |
-| `PUT` | `/api/posts/{id}` | Обновить пост |
-| `DELETE` | `/api/posts/{id}` | Удалить пост |
+| Method | URL | Description |
+|--------|-----|-------------|
+| `GET` | `/api/posts?page=1&pageSize=10` | Paginated feed (newest first) |
+| `GET` | `/api/posts/{id}` | Get a single post by ID |
+| `POST` | `/api/posts` | Create a new post |
+| `PUT` | `/api/posts/{id}` | Update an existing post |
+| `DELETE` | `/api/posts/{id}` | Delete a post |
 
-#### Создание поста
+#### Create a post
+
 ```json
 POST /api/posts
 {
-  "title": "Отличный день!",
-  "content": "Сегодня я наконец завершил проект...",
+  "title": "Great day!",
+  "content": "I finally finished the project today...",
   "mood": "😊 happy"
 }
 ```
 
-#### Лента постов (ответ)
+#### Feed response
+
 ```json
 {
   "items": [
     {
       "id": 3,
-      "title": "Ещё один день",
+      "title": "Another day",
       "content": "...",
       "mood": "😐 neutral",
       "createdAt": "2024-01-07T18:30:00Z",
@@ -140,9 +146,9 @@ POST /api/posts
 
 ---
 
-## Конфигурация
+## Configuration
 
-В `appsettings.json`:
+In `appsettings.json`:
 
 ```json
 {
@@ -150,25 +156,25 @@ POST /api/posts
     "Default": "Data Source=diary.db"
   },
   "Jwt": {
-    "Key": "ВАШ_СЕКРЕТНЫЙ_КЛЮЧ_МИНИМУМ_32_СИМВОЛА"
+    "Key": "YOUR_SECRET_KEY_AT_LEAST_32_CHARACTERS"
   }
 }
 ```
 
-> ⚠️ В продакшене используйте **User Secrets** или переменные среды:
+> ⚠️ In production, never store secrets in `appsettings.json`. Use **User Secrets** or environment variables instead:
 > ```bash
 > dotnet user-secrets set "Jwt:Key" "YourProductionSecret"
 > ```
 
 ---
 
-## Используемые технологии
+## Dependencies
 
-| Библиотека | Назначение |
-|------------|-----------|
-| ASP.NET Core 8 | Web framework |
-| Entity Framework Core 8 | ORM |
-| SQLite | База данных |
-| BCrypt.Net-Next | Хеширование паролей |
-| Microsoft.AspNetCore.Authentication.JwtBearer | JWT |
+| Package | Purpose |
+|---------|---------|
+| ASP.NET Core 10 | Web framework |
+| Entity Framework Core 10 | ORM |
+| SQLite | Database |
+| BCrypt.Net-Next | Password hashing |
+| Microsoft.AspNetCore.Authentication.JwtBearer | JWT authentication |
 | Swashbuckle | Swagger UI |
